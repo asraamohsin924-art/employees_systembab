@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<style>
+@font-face {
+    font-family: 'Arabic';
+    src: url('/static/fonts/Amiri-Regular.ttf');
+}
+
+body{
+    font-family: 'Arabic';
+}
+
+table{
+    width:100%;
+    border-collapse: collapse;
+}
+
+td{
+    border:1px solid black;
+    padding:8px;
+}
+</style>
+</head>
+
+<body>
+
+<h2 style="text-align:center;">شريط راتب</h2>
+
+<table>
+
+<tr>
+<td>اسم الموظف</td>
+<td>{{ employee.name }}</td>
+</tr>
+
+<tr>
+<td>العنوان الوظيفي</td>
+<td>{{ employee.job_title }}</td>
+</tr>
+
+<tr>
+<td>الدرجة / المرحلة</td>
+<td>{{ employee.grade }} / {{ employee.stage }}</td>
+</tr>
+
+<tr>
+<td>الراتب الاسمي</td>
+<td>{{ employee.base_salary }}</td>
+</tr>
+
+<tr>
+<td>المكافئات</td>
+<td>{{ employee.bonuses }}</td>
+</tr>
+
+<tr>
+<td>الساعات الإضافية</td>
+<td>{{ employee.overtime }}</td>
+</tr>
+
+<tr>
+<td>المجموع</td>
+<td>{{ employee.total }}</td>
+</tr>
+
+<tr>
+<td>التقاعد</td>
+<td>{{ employee.retirement }}</td>
+</tr>
+
+<tr>
+<td>الضريبة</td>
+<td>{{ employee.tax }}</td>
+</tr>
+
+<tr>
+<td>الاستقطاعات</td>
+<td>{{ employee.deductions }}</td>
+</tr>
+
+<tr>
+<td>الصافي</td>
+<td><strong>{{ employee.net_salary }}</strong></td>
+</tr>
+
+</table>
+
+</body>
+</html>

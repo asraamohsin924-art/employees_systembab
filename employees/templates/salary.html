@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+
+<title>شريط الراتب</title>
+
+<style>
+body{
+    font-family: "Tahoma", Arial;
+    background:#f5f7fa;
+    margin:0;
+    padding:0;
+}
+
+#paper{
+    width:900px;
+    margin:auto;
+    background:white;
+    padding:30px;
+    margin-top:40px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.header{
+    display:flex;
+    flex-direction:column;   /* يخلي العناصر فوق بعض */
+    align-items:center;      /* توسيط أفقي */
+    justify-content:center;
+    border-bottom:2px solid #0d6efd;
+    padding-bottom:10px;
+    margin-bottom:20px;
+}
+
+.header img{
+    height:180px;   /* كبرناه */
+    margin-bottom:10px;
+}
+
+.header h2{
+    margin:0;
+    color:#0d6efd;
+}
+
+table{
+    width:100%;
+    border-collapse: collapse;
+    margin-top:20px;
+}
+
+td{
+    padding:10px;
+    border:1px solid #ddd;
+}
+
+.title{
+    background:#0d6efd;
+    color:white;
+    font-weight:bold;
+    width:40%;
+}
+
+button{
+    border-radius:6px;
+    font-size:14px;
+    transition:0.3s;
+}
+
+button:hover{
+    opacity:0.8;
+}
+</style>
+</head>
+
+<body>
+
+<div id="paper">
+    {% if request.user.is_superuser %}
+
+<a href="/upload/">
+    <button style="background:#6c757d; color:white; padding:8px 15px; border:none;">
+    رفع ملف Excel
+</button>
+</a>
+
+{% endif %}
+<div style="text-align:right;">
+    <a href="/logout/">
+        <button style="background:#dc3545; color:white; padding:8px 15px; border:none;">
+    تسجيل خروج
+</button>
+    </a>
+</div>
+
+<div class="header">
+    <img src="{% static 'logo.png' %}">
+    <h2>مديرية مجاري بابل</h2>
+    <h2>شعبة الحسابات</h2>
+    <h2>نظام شريط الراتب الإلكتروني</h2>
+</div>
+<p style="text-align:center; color:gray;">
+يمكنك إدخال الرقم الوظيفي للاطلاع على تفاصيل الراتب
+</p>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="text" name="emp_id" placeholder="ادخل الرقم الوظيفي">
+    <button type="submit" style="background:#0d6efd; color:white; padding:8px 15px; border:none;">
+    عرض
+</button>
+</form>
+
+<br>
+
+{% if error %}
+<p style="color:red; text-align:center;">{{ error }}</p>
+{% endif %}
+
+{% if employee %}
+
+<table>
+
+<tr>
+<td class="title">اسم الموظف</td>
+<td>{{ employee.name }}</td>
+</tr>
+
+<tr>
+<td class="title">العنوان الوظيفي</td>
+<td>{{ employee.job_title }}</td>
+</tr>
+
+<tr>
+<td class="title">الدرجة / المرحلة</td>
+<td>{{ employee.grade }} / {{ employee.stage }}</td>
+</tr>
+
+<tr>
+<td class="title">الراتب الاسمي</td>
+<td>{{ employee.base_salary }}</td>
+</tr>
+
+<tr>
+<td class="title">الحالة الزوجية / الأطفال</td>
+<td>{{ employee.marital_status }} / {{ employee.children }}</td>
+</tr>
+
+<tr>
+<td class="title">المخصصات</td>
+<td>{{ employee.risk_type }}</td>
+</tr>
+
+<tr>
+<td class="title">المكافئات</td>
+<td>{{ employee.bonuses }}</td>
+</tr>
+
+<tr>
+<td class="title">الساعات الإضافية</td>
+<td>{{ employee.overtime }}</td>
+</tr>
+
+<tr>
+<td class="title">المجموع</td>
+<td>{{ employee.total }}</td>
+</tr>
+
+<tr>
+<td class="title">التقاعد</td>
+<td>{{ employee.retirement }}</td>
+</tr>
+
+<tr>
+<td class="title">الضريبة</td>
+<td>{{ employee.tax }}</td>
+</tr>
+
+<tr>
+<td class="title">الاستقطاعات</td>
+<td>{{ employee.deductions }}</td>
+</tr>
+
+<tr>
+<td class="title">الضمان الاجتماعي</td>
+<td>{{ employee.social_security }}</td>
+</tr>
+
+<tr>
+<td class="title">الصافي</td>
+<td><strong>{{ employee.net_salary }}</strong></td>
+</tr>
+
+</table>
+
+<br><br>
+
+<a href="/pdf/{{ employee.emp_id }}">
+    <button style="background:#198754; color:white; padding:10px 20px; border:none;">
+        تحميل شريط الراتب PDF
+    </button>
+</a>
+
+{% endif %}
+</div>
+
+</body>
+</html>
