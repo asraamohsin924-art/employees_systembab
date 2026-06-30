@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'employees_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/var/data/db.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -129,4 +129,4 @@ ALLOWED_HOSTS = ['*']
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 100000
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = '/var/data/media'
+MEDIA_ROOT = BASE_DIR / 'media'

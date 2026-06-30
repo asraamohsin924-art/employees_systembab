@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+<meta charset="UTF-8">
+<title>المعلومات الوظيفية</title>
+
+<style>
+
+body{
+    font-family:Tahoma;
+    background:#f5f5f5;
+    padding:20px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 10px rgba(0,0,0,.1);
+}
+
+h1{
+    text-align:center;
+    color:#2c3e50;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td{
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+.label{
+    font-weight:bold;
+    background:#f0f0f0;
+    width:35%;
+}
+
+.back-btn{
+    display:block;
+    width:200px;
+    margin:20px auto;
+    text-align:center;
+    background:#198754;
+    color:white;
+    text-decoration:none;
+    padding:12px;
+    border-radius:8px;
+}
+@media print {
+
+    body{
+        background:white;
+        margin:0;
+        padding:0;
+		zoom:100%;
+    }
+
+    .container{
+        width:100%;
+        max-width:100%;
+        margin:0;
+        padding:10px;
+        box-shadow:none;
+        border:none;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+        font-size:13px;
+    }
+
+    td{
+        padding:6px;
+    }
+
+    .back-btn,
+    button{
+        display:none !important;
+    }
+
+    @page{
+        size:A4 portrait;
+        margin:10mm;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>المعلومات الوظيفية</h1>
+<p style="
+    text-align:center;
+    color:red;
+    font-size:15px;
+    font-weight:bold;
+    margin-top:-5px;
+    margin-bottom:15px;
+">
+    ملاحظة: أي اختلاف في الدرجة أو المرحلة الحالية بين المعلومات الوظيفية وشريط الراتب الإلكتروني يعود إلى عدم قيام وزارة المالية بتمويل العلاوات والترفيعات للأعوام 2025-2026
+</p>
+<table>
+
+<tr>
+<td class="label">الاسم الرباعي واللقب</td>
+<td>{{ info.full_name }}</td>
+</tr>
+
+<tr>
+<td class="label">المواليد</td>
+<td>{{ info.birth_date|slice:":10" }}</td>
+</tr>
+
+<tr>
+<td class="label">اسم الام الثلاثي</td>
+<td>{{ info.mother_name }}</td>
+</tr>
+
+<tr>
+<td class="label">الجنس</td>
+<td>{{ info.gender }}</td>
+</tr>
+
+<tr>
+<td class="label">نوع التعيين</td>
+<td>{{ info.employment_type }}</td>
+</tr>
+
+<tr>
+<td class="label">الحالة الزوجية</td>
+<td>{{ info.marital_status }}</td>
+</tr>
+
+<tr>
+<td class="label">رقم امر التعيين</td>
+<td>{{ info.appointment_order_date|slice:":10" }}</td>
+</tr>
+
+<tr>
+<td class="label">تاريخ المباشرة</td>
+<td>{{ info.start_date|slice:":10" }}</td>
+</tr>
+
+<tr>
+<td class="label">الراتب الاسمي</td>
+<td>{{ info.basic_salary }}</td>
+</tr>
+
+<tr>
+<td class="label">العنوان الوظيفي</td>
+<td>{{ info.job_title }}</td>
+</tr>
+
+<tr>
+<td class="label">التحصيل الدراسي</td>
+<td>{{ info.education }}</td>
+</tr>
+
+<tr>
+<td class="label">الاختصاص</td>
+<td>{{ info.specialization }}</td>
+</tr>
+
+<tr>
+<td class="label">الدرجة الوظيفية</td>
+<td>{{ info.grade }}</td>
+</tr>
+
+<tr>
+<td class="label">المرحلة</td>
+<td>{{ info.stage }}</td>
+</tr>
+
+<tr>
+<td class="label">تاريخ اخر علاوة</td>
+<td>{{ info.last_bonus|slice:":10" }}</td>
+</tr>
+
+<tr>
+<td class="label">تاريخ اخر ترفيع</td>
+<td>{{ info.last_promotion|slice:":10" }}</td>
+</tr>
+
+<tr>
+<td class="label">الشعبة</td>
+<td>{{ info.department }}</td>
+</tr>
+
+<tr>
+<td class="label">الملاحظات</td>
+<td>{{ info.notes }}</td>
+</tr>
+
+<tr>
+<td class="label">سنة التخرج</td>
+<td>{{ info.graduation_year }}</td>
+</tr> 
+
+<tr>
+<td class="label">مدة الخدمة</td>
+<td>{{ info.service_duration }}</td>
+</tr>
+
+
+
+
+</table>
+<div style="text-align:center; margin-top:20px;">
+
+    <button onclick="window.print()"
+        style="
+        background:#0d6efd;
+        color:white;
+        border:none;
+        padding:12px 25px;
+        border-radius:8px;
+        font-size:16px;
+        cursor:pointer;
+        margin-left:10px;">
+        تحميل / طباعة PDF
+    </button>
+
+    <a href="/salary/?show=salary&emp_id={{ info.emp_id }}"
+       style="
+       display:inline-block;
+       background:#198754;
+       color:white;
+       text-decoration:none;
+       padding:12px 25px;
+       border-radius:8px;
+       font-size:16px;">
+       العودة
+    </a>
+
+</div>
+
+</div>
+
+</body>
+</html>
