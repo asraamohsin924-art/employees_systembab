@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Employee
-from weasyprint import HTML
+from .models import Employee, EmployeeInfo
+# from weasyprint import HTML
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
@@ -42,40 +42,75 @@ def salary_lookup(request):
     employee = None
     error = None
 
-    if request.method == "POST":
-        emp_id = request.POST.get("emp_id")
+    if request.method == "GET" and request.GET.get("show") == "salary":
+        emp_id = request.GET.get("emp_id")
+        if emp_id:
+            employee = Employee.objects.filter(emp_id=str(emp_id)).first()
 
+    elif request.method == "POST":
+        emp_id = request.POST.get("emp_id")
         if emp_id:
             emp_id = emp_id.strip()
-
-            employee = Employee.objects.filter(
-    emp_id=str(emp_id)
-).first()
-
+            employee = Employee.objects.filter(emp_id=str(emp_id)).first()
             if not employee:
                 error = "لا يوجد موظف بهذا الرقم"
         else:
-            error = "الرجاء إدخال الرقم الوظيفي"
+            error = "الرجاء إدخال الكود"
 
     return render(request, "salary.html", {
         "employee": employee,
         "error": error
     })
 
+
+
+
 # 👇 هنا تضيفها (تحتها مباشرة)
 def logout_view(request):
     logout(request)
     return redirect('login')
+@login_required
 def generate_pdf(request, emp_id):
     employee = Employee.objects.filter(emp_id=emp_id).first()
 
-    html = render(request, 'salary_pdf.html', {
-        'employee': employee
-    }).content.decode('utf-8')
+    template = get_template('salary_pdf.html')
+    html = template.render({'employee': employee})
 
-    pdf = HTML(string=html).write_pdf()
-
-    response = HttpResponse(pdf, content_type='application/pdf')
+    response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="salary.pdf"'
 
+    pisa_status = pisa.CreatePDF(html, dest=response)
+
+    if pisa_status.err:
+        return HttpResponse('حدث خطأ أثناء إنشاء ملف PDF')
+
     return response
+
+@login_required
+def employee_info_pdf(request, emp_id):
+
+    info = EmployeeInfo.objects.filter(
+        emp_id=emp_id
+    ).first()
+
+    return render(
+        request,
+        'employee_info_pdf.html',
+        {
+            'info': info
+        }
+    )
+@login_required
+def employee_info(request, emp_id):
+
+    info = EmployeeInfo.objects.filter(
+        emp_id=emp_id
+    ).first()
+
+    return render(
+        request,
+        'employee_info.html',
+        {
+            'info': info
+        }
+    )

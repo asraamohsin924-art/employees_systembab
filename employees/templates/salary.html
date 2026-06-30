@@ -71,6 +71,48 @@ button{
 button:hover{
     opacity:0.8;
 }
+@media print {
+
+    body{
+        background:white;
+        margin:0;
+        padding:0;
+        zoom:90%;
+    }
+
+    #paper{
+        width:100%;
+        margin:0;
+        padding:10px;
+        box-shadow:none;
+        border-radius:0;
+    }
+
+    .header img{
+        height:90px;
+    }
+
+    table{
+        font-size:12px;
+        margin-top:5px;
+    }
+
+    td{
+        padding:4px;
+    }
+
+    form,
+    button,
+    a,
+    .no-print{
+        display:none !important;
+    }
+
+    @page{
+        size:A4 portrait;
+        margin:5mm;
+    }
+}
 </style>
 </head>
 
@@ -104,14 +146,14 @@ button:hover{
 لاتعتبر هذه الوثيقة رسمية لمخاطبة الدوائر
 </p>
 <p style="text-align:center; color:rgb(128, 128, 128);">
-يمكنك إدخال الرقم الوظيفي للاطلاع على تفاصيل الراتب
+يمكنك إدخال الكود الخاص بك للاطلاع على تفاصيل الراتب
 
 </p>
 <form method="POST" style="text-align:center;">
     {% csrf_token %}
 
     <input type="text" name="emp_id" 
-           placeholder="ادخل الرقم الوظيفي"
+           placeholder="ادخل الكود الخاص بك"
            style="width:350px; height:25px; font-size:18px; padding:10px; border-radius:8px; border:1px solid #ccc;">
 
 
@@ -130,6 +172,37 @@ button:hover{
 
 {% if employee %}
 
+<div style="text-align:center; margin:20px 0;">
+<div style="text-align:center; margin:20px 0;">
+    <h2 style="color:#0d6efd;">
+        مرحباً بك
+    </h2>
+
+    <h3 style="color:#198754;">
+        {{ employee.name }}
+    </h3>
+
+    <p style="color:#666;">
+        يرجى اختيار الخدمة المطلوبة
+    </p>
+</div>
+    <a href="/salary/?show=salary&emp_id={{ employee.emp_id }}">
+        <button style="background:#198754; color:white; padding:12px 25px; border:none; border-radius:8px; font-size:17px;">
+            شريط الراتب
+        </button>
+    </a>
+
+    <a href="/info/{{ employee.emp_id }}/">
+        <button style="background:#0d6efd; color:white; padding:12px 25px; border:none; border-radius:8px; font-size:17px;">
+            المعلومات الوظيفية
+        </button>
+    </a>
+
+</div>
+{% if request.GET.show == "salary" %}
+<h3 style="text-align:center; color:#dc3545; margin:15px 0;">
+    شريط راتب شهر حزيران 2026
+</h3>
 <table>
 
 <tr>
@@ -184,7 +257,7 @@ button:hover{
 </tr>
 
 <tr>
-<td class="title">مهنية</td>
+<td class="title">مهنية + خطورة</td>
 <td>{{ employee.professional }}</td>
 </tr>
 
@@ -193,10 +266,7 @@ button:hover{
 <td>{{ employee.engineering }}</td>
 </tr>
 
-<tr>
-<td class="title">الخطورة</td>
-<td>{{ employee.risk_type }}</td>
-</tr
+
 
 <tr>
 <td class="title">الاضافات</td>
@@ -249,19 +319,27 @@ button:hover{
 </tr>
 
 </table>
+{% endif %}
+<div style="text-align:center; margin-top:20px;">
 
-<br><br>
-
-<a href="/pdf/{{ employee.emp_id }}">
-    <button style="background:#198754; color:white; padding:10px 20px; border:none;">
-        تحميل شريط الراتب PDF
+    <button onclick="window.print()"
+        style="
+        background:#0d6efd;
+        color:white;
+        border:none;
+        padding:12px 25px;
+        border-radius:8px;
+        font-size:16px;
+        cursor:pointer;
+        margin-left:10px;">
+        تحميل / طباعة PDF
     </button>
-</a>
+
 
 {% endif %}
 </div>
 <div style="text-align:center; margin-top:30px; color:black; font-size:20px; font-weight:bold;">
-     By : Msc asraa mohsin
+     By : Msc Asraa Mohsin
 </div>
 </body>
 </html>
