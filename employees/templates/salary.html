@@ -8,10 +8,11 @@
 
 <style>
 body{
-    font-family: "Tahoma", Arial;
+    font-family: "times new roman", Arial;
     background:#f5f7fa;
     margin:0;
     padding:0;
+    font-size: 20px;
 }
 
 #paper{
@@ -137,7 +138,7 @@ button:hover{
     <img src="{% static 'logo.png' %}">
     <h2>مديرية مجاري بابل</h2>
     <h2>شعبة الحسابات</h2>
-    <h2>نظام شريط الراتب الإلكتروني</h2>
+    <h2>نظام شريط الراتب والمعلومات الوظيفية الإلكتروني</h2>
     
 </div>
 <p style="text-align:center; color:rgb(243, 14, 6);">
@@ -146,7 +147,7 @@ button:hover{
 لاتعتبر هذه الوثيقة رسمية لمخاطبة الدوائر
 </p>
 <p style="text-align:center; color:rgb(128, 128, 128);">
-يمكنك إدخال الكود الخاص بك للاطلاع على تفاصيل الراتب
+يمكنك إدخال الكود الخاص بك للاطلاع على تفاصيل الراتب والمعلومات الوظيفية
 
 </p>
 <form method="POST" style="text-align:center;">
@@ -201,7 +202,7 @@ button:hover{
 </div>
 {% if request.GET.show == "salary" %}
 <h3 style="text-align:center; color:#dc3545; margin:15px 0;">
-    شريط راتب شهر حزيران 2026
+    شريط الراتب لشهر تموز 2026
 </h3>
 <table>
 
@@ -211,13 +212,13 @@ button:hover{
 </tr>
 
 <tr>
-<td class="title">عنوان وظيفي</td>
+<td class="title">العنوان الوظيفي</td>
 <td>{{ employee.job_title }}</td>
 </tr>
 
 <tr>
     <tr>
-<td class="title">د وظيفية</td>
+<td class="title">الدرجة الوظيفية</td>
 <td>{{ employee.grade }}</td>
 </tr>
 
