@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأجور - مديرية مجاري بابل</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:"Times New Roman",Arial,sans-serif;background:#eef5fb url("{% static 'directorate_background_clean.jpg' %}") center center/cover fixed no-repeat;color:#17324d;min-height:100vh}body:before{content:"";position:fixed;inset:0;background:rgba(255,255,255,.86);z-index:-1}.topbar{height:70px;background:linear-gradient(90deg,#124d87,#1768aa);display:flex;align-items:center;justify-content:space-between;padding:0 4%;color:#fff;box-shadow:0 3px 15px rgba(0,50,90,.18)}.brand{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:bold}.brand img{width:45px;height:45px;object-fit:contain}.nav{display:flex;gap:8px;align-items:center}.nav a{color:#fff;text-decoration:none;padding:11px 15px;border-radius:9px;font-size:17px}.nav a:hover,.nav .active{background:rgba(255,255,255,.15)}.nav .logout{background:#c83c3c}.wrap{max-width:900px;margin:0 auto;padding:35px 22px 50px}.paper{background:rgba(255,255,255,.97);border-radius:22px;padding:32px;box-shadow:0 14px 40px rgba(30,70,100,.14);border:1px solid rgba(20,90,130,.12)}.head{text-align:center}.head img{width:105px;height:105px;object-fit:contain}.head h1{color:#7046ad;margin:8px 0 5px;font-size:36px}.head p{color:#607586;font-size:19px}.line{width:110px;height:3px;background:#7046ad;margin:15px auto 25px;border-radius:5px}.search{text-align:center;margin:20px 0 25px}.search input{width:360px;max-width:80%;height:48px;padding:8px 14px;font-size:20px;border:1px solid #cbd8e2;border-radius:10px;outline:none}.btn{border:0;border-radius:10px;padding:12px 30px;color:#fff;font-size:18px;font-family:inherit;cursor:pointer;background:#7046ad;margin-right:7px}.error{text-align:center;color:#dc3545;font-weight:bold}.welcome{text-align:center;color:#7046ad;font-size:25px}.table{width:100%;border-collapse:collapse;margin-top:22px}.table td{border:1px solid #d9e2e9;padding:13px;font-size:19px}.label{font-weight:bold;background:#f0eafa;width:42%;color:#4e356f}.total{font-size:22px;font-weight:bold;color:#198754}.actions{text-align:center;margin-top:28px}.back{display:inline-block;background:#647586;color:#fff;text-decoration:none;padding:11px 26px;border-radius:9px;font-size:18px;margin:5px}.print{background:#198754}@media(max-width:800px){.topbar{height:auto;min-height:65px;flex-wrap:wrap;padding:8px 12px}.brand{font-size:16px}.nav{width:100%;justify-content:center;flex-wrap:wrap}.nav a{font-size:14px;padding:8px 10px}.paper{padding:20px}.head h1{font-size:30px}.table td{font-size:17px;padding:10px}.search input{width:100%;max-width:100%;margin-bottom:10px}.btn{margin:3px}}@media print{body{background:white}.topbar,.search,.actions{display:none!important}.wrap{padding:0}.paper{box-shadow:none;border:0}.head img{width:80px;height:80px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="brand"><img src="{% static 'logo.png' %}" alt="شعار المديرية"><span>مديرية مجاري بابل</span></div><nav class="nav"><a href="{% url 'home' %}">🏠 الرئيسية</a><a href="{% url 'salary_lookup' %}">👥 الملاك الدائمي</a><a href="{% url 'contract_categories' %}">📄 العقود</a><a class="active" href="{% url 'wage_lookup' %}">💰 الأجور</a><a class="logout" href="{% url 'logout' %}">⏻ تسجيل خروج</a></nav></header>
+<main class="wrap"><div class="paper"><div class="head"><img src="{% static 'logo.png' %}" alt="الشعار"><h1>الأجور</h1><p>إدخال كود الموظف لعرض بيانات الأجور اليومية</p><div class="line"></div></div>
+<form method="post" class="search">{% csrf_token %}<input name="code" placeholder="ادخل الكود الخاص بك" autocomplete="off" autofocus><button class="btn" type="submit">عرض البيانات</button></form>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+{% if wage %}<h2 class="welcome">مرحباً بك {{ wage.name }}</h2><table class="table">
+<tr><td class="label">الكود</td><td>{{ wage.code }}</td></tr>
+<tr><td class="label">الاسم</td><td>{{ wage.name }}</td></tr>
+<tr><td class="label">عدد الأيام حسب موقف الحضور</td><td>{{ wage.days }}</td></tr>
+<tr><td class="label">المبلغ اليومي</td><td>{{ wage.daily_amount }}</td></tr>
+<tr><td class="label">المكافئات</td><td>{{ wage.bonuses }}</td></tr>
+<tr><td class="label">المبلغ الكلي</td><td class="total">{{ wage.total_amount }}</td></tr>
+</table>{% endif %}
+<div class="actions"><button class="btn print" onclick="window.print()">طباعة</button><a class="back" href="{% url 'home' %}">↩ الرئيسية</a></div>
+</div></main></body></html>

@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>{{ category_name }}</title>
+<style>
+body{font-family:"Times New Roman",Arial;background:#f5f7fa;margin:0;padding:25px;font-size:19px}.paper{max-width:900px;margin:25px auto;background:white;padding:30px;border-radius:18px;box-shadow:0 8px 25px rgba(0,0,0,.1)}.head{text-align:center}.head img{height:100px}.head h1{color:#198754}.search{text-align:center;margin:25px 0}.search input{width:330px;max-width:80%;height:25px;padding:10px;font-size:18px;border:1px solid #ccc;border-radius:8px}.btn{border:0;border-radius:8px;padding:11px 24px;color:#fff;font-size:17px;font-family:inherit;cursor:pointer}.search .btn{background:#198754}.error{text-align:center;color:#dc3545;font-weight:bold}.welcome{text-align:center;color:#198754}.table{width:100%;border-collapse:collapse;margin-top:20px}.table td{border:1px solid #ddd;padding:10px}.label{font-weight:bold;background:#eef5ff;width:40%}.actions{text-align:center;margin-top:25px}.back{display:inline-block;background:#0d6efd;color:white;text-decoration:none;padding:11px 24px;border-radius:8px;margin:5px}.home{background:#6c757d}.print{background:#198754}@media print{.search,.actions,.no-print{display:none!important}body{background:white;padding:0}.paper{box-shadow:none;margin:0;max-width:100%}}
+</style></head><body><div class="paper"><div class="head"><img src="{% static 'logo.png' %}"><h1>{{ category_name }}</h1><p>أدخل الكود الخاص بك للاطلاع على بيانات العقد</p></div>
+<form method="post" class="search">{% csrf_token %}<input name="code" placeholder="ادخل الكود الخاص بك" autocomplete="off"><button class="btn" type="submit">عرض البيانات</button></form>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+{% if contract %}<h2 class="welcome">مرحباً بك {{ contract.name }}</h2><table class="table">
+<tr><td class="label">الكود</td><td>{{ contract.code }}</td></tr>
+<tr><td class="label">الاسم</td><td>{{ contract.name }}</td></tr>
+{% if category == "1000" %}
+<tr><td class="label">الراتب</td><td>{{ contract.monthly_salary }}</td></tr>
+<tr><td class="label">المصرف</td><td>{{ contract.bank }}</td></tr>
+{% elif category == "bachelor" %}
+<tr><td class="label">تاريخ المباشرة</td><td>{{ contract.start_date }}</td></tr>
+<tr><td class="label">عدد الأيام</td><td>{{ contract.days }}</td></tr>
+<tr><td class="label">الراتب الشهري</td><td>{{ contract.monthly_salary }}</td></tr>
+<tr><td class="label">المبلغ الإجمالي</td><td>{{ contract.total_amount }}</td></tr>
+<tr><td class="label">مبلغ الغياب</td><td>{{ contract.absence_deduction }}</td></tr>
+<tr><td class="label">صافي المبلغ بعد استقطاع الغياب</td><td>{{ contract.net_after_absence }}</td></tr>
+<tr><td class="label">استقطاع 5%</td><td>{{ contract.pension_5 }}</td></tr>
+<tr><td class="label">صافي الراتب بعد استقطاع 5%</td><td><strong>{{ contract.net_salary }}</strong></td></tr>
+<tr><td class="label">اسم المصرف</td><td>{{ contract.bank }}</td></tr>
+<tr><td class="label">رقم الهاتف</td><td>{{ contract.phone }}</td></tr>
+<tr><td class="label">الملاحظات</td><td>{{ contract.notes }}</td></tr>
+{% else %}
+<tr><td class="label">العنوان الوظيفي</td><td>{{ contract.job_title }}</td></tr>
+<tr><td class="label">تاريخ المباشرة</td><td>{{ contract.start_date }}</td></tr>
+<tr><td class="label">الراتب</td><td>{{ contract.monthly_salary }}</td></tr>
+<tr><td class="label">الغياب</td><td>{{ contract.absence_deduction }}</td></tr>
+<tr><td class="label">الراتب الكلي بعد استقطاع الغياب</td><td>{{ contract.net_after_absence }}</td></tr>
+<tr><td class="label">التقاعد 5%</td><td>{{ contract.pension_5 }}</td></tr>
+<tr><td class="label">الصافي</td><td><strong>{{ contract.net_salary }}</strong></td></tr>
+<tr><td class="label">المصرف</td><td>{{ contract.bank }}</td></tr>
+<tr><td class="label">مكان العمل</td><td>{{ contract.workplace }}</td></tr>
+<tr><td class="label">الملاحظات</td><td>{{ contract.notes }}</td></tr>
+<tr><td class="label">رقم الهاتف</td><td>{{ contract.phone }}</td></tr>
+{% endif %}
+</table>{% endif %}
+<div class="actions"><button class="btn print" onclick="window.print()">طباعة / PDF</button><a class="back" href="{% url 'contract_categories' %}">↩ أنواع العقود</a><a class="back home" href="{% url 'home' %}">الرئيسية</a></div>
+</div></body></html>

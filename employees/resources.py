@@ -1,5 +1,5 @@
 from import_export import resources, fields
-from .models import Employee, EmployeeInfo
+from .models import Employee, EmployeeInfo, Contract, Contract1000, ContractBachelorDiploma, ContractSecondary, Wage
 
 
 class EmployeeResource(resources.ModelResource):
@@ -61,3 +61,48 @@ class EmployeeInfoResource(resources.ModelResource):
     class Meta:
         model = EmployeeInfo
         import_id_fields = ('emp_id',)
+
+class ContractResource(resources.ModelResource):
+    class Meta:
+        model = Contract
+        import_id_fields = ('category', 'code')
+
+
+class Contract1000Resource(ContractResource):
+    class Meta:
+        model = Contract1000
+        import_id_fields = ('code',)
+
+    def before_import_row(self, row, **kwargs):
+        row['category'] = '1000'
+
+
+class ContractBachelorDiplomaResource(ContractResource):
+    class Meta:
+        model = ContractBachelorDiploma
+        import_id_fields = ('code',)
+
+    def before_import_row(self, row, **kwargs):
+        row['category'] = 'bachelor'
+
+
+class ContractSecondaryResource(ContractResource):
+    class Meta:
+        model = ContractSecondary
+        import_id_fields = ('code',)
+
+    def before_import_row(self, row, **kwargs):
+        row['category'] = 'secondary'
+
+
+class WageResource(resources.ModelResource):
+    code = fields.Field(attribute="code", column_name="الكود")
+    name = fields.Field(attribute="name", column_name="الاسم")
+    days = fields.Field(attribute="days", column_name="عدد الايام")
+    daily_amount = fields.Field(attribute="daily_amount", column_name="المبلغ اليومي")
+    bonuses = fields.Field(attribute="bonuses", column_name="المكافئات")
+    total_amount = fields.Field(attribute="total_amount", column_name="المبلغ الكلي")
+
+    class Meta:
+        model = Wage
+        import_id_fields = ("code",)

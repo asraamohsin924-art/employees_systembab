@@ -126,6 +126,12 @@ button:hover{
 </a>
 </p></p>
 {% endif %}
+<div style="text-align:center; margin:18px 0;">
+    <a href="{% url 'home' %}" style="display:inline-block; text-decoration:none; background:#6c757d; color:white; padding:12px 28px; border-radius:8px; font-size:18px; font-weight:bold;">
+        ↩ رجوع إلى الواجهة الرئيسية
+    </a>
+</div>
+
 <div style="text-align:right;">
     <a href="/logout/">
         <button style="background:#dc3545; color:white; padding:8px 15px; border:none;">
@@ -202,7 +208,7 @@ button:hover{
 </div>
 {% if request.GET.show == "salary" %}
 <h3 style="text-align:center; color:#dc3545; margin:15px 0;">
-	شريط الراتب لشهر آب 2026
+    شريط الراتب لشهر تموز 2026
 </h3>
 <table>
 
