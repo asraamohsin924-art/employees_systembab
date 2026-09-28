@@ -1,8 +1,87 @@
 from import_export import resources, fields
+from django.conf import settings
+from django.db import transaction, connections
+from pathlib import Path
+from datetime import datetime
+import shutil
+
 from .models import Employee, EmployeeInfo, Contract, Contract1000, ContractBachelorDiploma, ContractSecondary, Wage
 
 
-class EmployeeResource(resources.ModelResource):
+
+
+class ReplaceAllResourceMixin:
+    """Safely replace the dataset during a confirmed admin import.
+
+    - Preview/dry-run never changes the database.
+    - Excel headers are normalized by trimming surrounding whitespace.
+    - On confirmed import, a database backup is created first.
+    - Only this resource's dataset is replaced.
+    - Any import error rolls the transaction back.
+    """
+
+    def get_replace_queryset(self):
+        return self._meta.model.objects.all()
+
+    def _normalize_headers(self, dataset):
+        if not getattr(dataset, "headers", None):
+            return
+        # Excel files sometimes contain headers such as "الكود " with a
+        # trailing space. Normalize the header text before import-export
+        # validates import_id_fields.
+        dataset.headers = [
+            h.strip() if isinstance(h, str) else h
+            for h in dataset.headers
+        ]
+
+    def _backup_database(self):
+        db_name = connections["default"].settings_dict.get("NAME")
+        if not db_name or db_name == ":memory:":
+            return None
+
+        db_path = Path(str(db_name))
+        if not db_path.exists():
+            return None
+
+        if str(db_path).startswith("/var/data/"):
+            backup_dir = db_path.parent / "import_backups"
+        else:
+            backup_dir = Path(settings.BASE_DIR) / "import_backups"
+
+        backup_dir.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_path = backup_dir / f"db_before_import_{stamp}.sqlite3"
+        shutil.copy2(db_path, backup_path)
+
+        backups = sorted(
+            backup_dir.glob("db_before_import_*.sqlite3"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        for old_backup in backups[5:]:
+            try:
+                old_backup.unlink()
+            except OSError:
+                pass
+        return backup_path
+
+    def import_data(self, dataset, dry_run=False, *args, **kwargs):
+        # Normalize headers before django-import-export checks import_id_fields.
+        self._normalize_headers(dataset)
+
+        if dry_run:
+            return super().import_data(dataset, dry_run=True, *args, **kwargs)
+
+        self._backup_database()
+        with transaction.atomic():
+            self.get_replace_queryset().delete()
+            result = super().import_data(dataset, dry_run=False, *args, **kwargs)
+            if result.has_errors() or result.has_validation_errors():
+                transaction.set_rollback(True)
+            return result
+
+
+class EmployeeResource(ReplaceAllResourceMixin, resources.ModelResource):
 
     emp_id = fields.Field(attribute='emp_id', column_name='التسلسل')
     name = fields.Field(attribute='name', column_name='اسم الموظف')
@@ -33,7 +112,7 @@ class EmployeeResource(resources.ModelResource):
         model = Employee
 
 
-class EmployeeInfoResource(resources.ModelResource):
+class EmployeeInfoResource(ReplaceAllResourceMixin, resources.ModelResource):
 
     emp_id = fields.Field(attribute='emp_id', column_name='التسلسل')
     full_name = fields.Field(attribute='full_name', column_name='الاسم الرباعي واللقب')
@@ -68,34 +147,43 @@ class ContractResource(resources.ModelResource):
         import_id_fields = ('category', 'code')
 
 
-class Contract1000Resource(ContractResource):
+class Contract1000Resource(ReplaceAllResourceMixin, ContractResource):
     class Meta:
         model = Contract1000
         import_id_fields = ('code',)
+
+    def get_replace_queryset(self):
+        return self._meta.model.objects.filter(category='1000')
 
     def before_import_row(self, row, **kwargs):
         row['category'] = '1000'
 
 
-class ContractBachelorDiplomaResource(ContractResource):
+class ContractBachelorDiplomaResource(ReplaceAllResourceMixin, ContractResource):
     class Meta:
         model = ContractBachelorDiploma
         import_id_fields = ('code',)
+
+    def get_replace_queryset(self):
+        return self._meta.model.objects.filter(category='bachelor')
 
     def before_import_row(self, row, **kwargs):
         row['category'] = 'bachelor'
 
 
-class ContractSecondaryResource(ContractResource):
+class ContractSecondaryResource(ReplaceAllResourceMixin, ContractResource):
     class Meta:
         model = ContractSecondary
         import_id_fields = ('code',)
+
+    def get_replace_queryset(self):
+        return self._meta.model.objects.filter(category='secondary')
 
     def before_import_row(self, row, **kwargs):
         row['category'] = 'secondary'
 
 
-class WageResource(resources.ModelResource):
+class WageResource(ReplaceAllResourceMixin, resources.ModelResource):
     code = fields.Field(attribute="code", column_name="الكود")
     name = fields.Field(attribute="name", column_name="الاسم")
     days = fields.Field(attribute="days", column_name="عدد الايام")

@@ -76,10 +76,20 @@ WSGI_APPLICATION = 'employees_system.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+from pathlib import Path
+
+# قاعدة البيانات:
+# Render يستخدم القرص الدائم /var/data
+# التشغيل المحلي يستخدم db.sqlite3 داخل المشروع
+if Path('/var/data').exists():
+    DATABASE_PATH = '/var/data/db.sqlite3'
+else:
+    DATABASE_PATH = BASE_DIR / 'db.sqlite3'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/var/data/db.sqlite3',
+        'NAME': DATABASE_PATH,
     }
 }
 
