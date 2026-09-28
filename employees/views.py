@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .models import Employee, EmployeeInfo, Contract, Wage
 from django.http import HttpResponse
 from django.template.loader import get_template
-from xhtml2pdf import pisa
+# from xhtml2pdf import pisa
 from django.contrib.auth import logout
 
 
